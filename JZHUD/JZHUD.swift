@@ -25,7 +25,8 @@ class JZHUD: UIWindow {
     private var circle_3 = UIView()
     private var timer: NSTimer?
     private var circles: [UIView] = []
-    
+    private var loading = false
+
     static let sharedInstance = JZHUD(frame: UIScreen.mainScreen().bounds)
     private var style: AnimationStyle = .Rotate3d
     override init(frame: CGRect) {
@@ -51,10 +52,12 @@ class JZHUD: UIWindow {
     }
     
     dynamic private func screenRotate() {
-        JZHUD.hideHUD()
-        _ = circles.map { $0.transform = CGAffineTransformIdentity}
-        delay(0.1) { 
-            JZHUD.showHUD(JZHUD.sharedInstance.style)
+        if JZHUD.sharedInstance.loading {
+            JZHUD.hideHUD()
+            _ = circles.map { $0.transform = CGAffineTransformIdentity}
+            delay(0.1) {
+                JZHUD.showHUD(JZHUD.sharedInstance.style)
+            }
         }
     }
     
@@ -79,6 +82,7 @@ class JZHUD: UIWindow {
     
     class func showHUD(style: AnimationStyle = .Rotate3d) {
         let hud = JZHUD.sharedInstance
+        hud.loading = true
         hud.style = style
         hud.delay(0.05) {
             hud.hidden = false
@@ -95,6 +99,7 @@ class JZHUD: UIWindow {
     
     class func hideHUD() {
         let hud = JZHUD.sharedInstance
+        hud.loading = false
         hud.removeAnimations()
         if let timer = hud.timer {
             timer.invalidate()
